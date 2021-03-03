@@ -3,7 +3,7 @@ const mentorController = require('../controllers/mentor.controller')
 const joiMiddleware = require("../middlewares/joiValidator")
 const jwtMiddleware = require("../middlewares/jwtAuth")
 
-router.post('/register', joiMiddleware, mentorController.upload.single('profileImage'), mentorController.registerMentor)
+router.post('/register', mentorController.uploadImage, joiMiddleware, mentorController.registerMentor)
 
 router.post('/login', mentorController.login)
 

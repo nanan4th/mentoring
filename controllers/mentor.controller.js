@@ -4,39 +4,48 @@ const bcrypt = require('bcrypt')
 const jwt = require("jsonwebtoken")
 const multer = require("multer")
 
-const storage = multer.diskStorage({
-    destination: './uploads/mentorProfile',
-    filename: function(req, file, cb) {
-        cb(null, Date.now()+file.originalname);
-    }
-})
-
-const fileFilter = (req, file, cb) => {
-    if(file.mimetype === 'image/jpeg' || file.mimetype === 'image/png'){
-        cb(null, true);
-    } else {
-        cb(null, false);
-    }
-}
-
-const upload = multer({
-    storage: storage,
+const uploadImage = multer({
+    storage: multer.diskStorage({
+        destination: (req, file, cb) => {
+            cb(null, './uploads/mentorProfile/')
+        },
+        filename: (req, file, cb) => {
+            cb(null, new Date().getTime().toString() + '-' + file.originalname.replace(/\s/g, ''))
+        }
+    }),
     limits: {
         fileSize: 1024 * 1024 * 5
     },
-    fileFilter
-});
+    fileFilter: (req, file, cb) => {
+        if (file.mimetype === 'image/png' || file.mimetype === 'image/jpeg') {
+            cb(null, true)
+        } else {
+            cb(null, false)
+        }
+    }
+})
 
 //register
 function registerMentor(req, res, next) {
-    Mentor.create(req.body)
+    Mentor.create({
+        email: req.body.email,
+        name: req.body.name,
+        occupation: req.body.occupation,
+        category: req.body.category,
+        address: req.body.address,
+        method: req.body.method,
+        about: req.body.about,
+        rate: req.body.rate,
+        profileImage: req.file.filename,
+        password: req.body.password
+    })
         .then((data) => {
             let payload = {
                 id: data.id,
                 email: data.email
             }
             const token = jwt.sign(payload, process.env.JWT_TOKEN)
-            res.status(200).send({ data, token })
+            res.status(200).json({ data, token })
         })
         .catch((err) => {
             if (err.name == 'SequelizeUniqueConstraintError') {
@@ -49,7 +58,7 @@ function registerMentor(req, res, next) {
                         }))
                     }
                 }
-                return res.status(422).send(failResponse)
+                return res.status(422).json(failResponse)
             }
             return next(err)
         })
@@ -58,16 +67,22 @@ function registerMentor(req, res, next) {
 //login
 function login(req, res, next) {
     Mentor.findOne({ where: {email: req.body.email}})
-        .then((data) => {
-            bcrypt.compare(req.body.password, data.password, (err, result) => {
+    .then((data) => {
+        bcrypt.compare(req.body.password, data.password, (err, result) => {
+            if(err){
+                return next(err)
+            }
+            if(result){
                 let payload = {
                     id: data.id,
-                    email: data.email
+                    email: data.email,
+                    username: data.username
                 }
                 const token = jwt.sign(payload, process.env.JWT_TOKEN)
-                res.status(200).send({ auth: true, token })
-            })
+                res.status(200).json({ auth: true, token })
+            }
         })
+    })
         .catch((err) => {
             return next(err)
         })
@@ -77,7 +92,7 @@ function login(req, res, next) {
 function explore(req, res, next) {
     Mentor.findAll({where: {category: req.body.category}})
         .then( (mentors) => {
-            res.status(200).send({mentors})
+            res.status(200).json({mentors})
         })
         .catch((err) => {
             return next(err)
@@ -88,7 +103,7 @@ function explore(req, res, next) {
 function findAll(req, res, next) {
     Mentor.findAll()
         .then((mentors) => {
-            res.status(200).send({ users: mentors })
+            res.status(200).json({ users: mentors })
         })
         .catch((err) => {
             return next(err)
@@ -100,7 +115,7 @@ function findOne(req, res, next) {
     const id = req.params.id
     Mentor.findByPk(id)
         .then((data) => {
-            res.send(data)
+            res.json(data)
             if (data == null) {
                 next("User with id is not found")
             }
@@ -121,7 +136,7 @@ function update(req, res, next) {
             if (num != 1) {
                 return next(err)
             }
-            res.status(200).send({
+            res.status(200).json({
                 success: true,
                 message: "Update Successful"
             })
@@ -142,7 +157,7 @@ function _delete(req, res, next) {
             if (num != 1) {
                 return next(err)
             }
-            res.status(200).send({
+            res.status(200).json({
                 message: "Delete successful"
             })
         })
@@ -153,7 +168,7 @@ function _delete(req, res, next) {
 
 module.exports = {
     registerMentor,
-    upload,
+    uploadImage: uploadImage.single("profileImage"),
     login,
     explore,
     findAll,

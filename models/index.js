@@ -1,4 +1,5 @@
-const {Sequelize} = require('sequelize')
+const {Sequelize, DataTypes} = require('sequelize')
+const { mentor } = require('../validators')
 const env = process.env
 
 const sequelize = new Sequelize(env.DB_NAME, env.DB_USER, env.DB_PASS, {
@@ -17,9 +18,29 @@ const sequelize = new Sequelize(env.DB_NAME, env.DB_USER, env.DB_PASS, {
 const users = require('./user.model')(sequelize,Sequelize)
 const mentors = require('./mentor.model')(sequelize,Sequelize)
 
+const UsersMentors = sequelize.define('UsersMentors', {
+    usersId: {
+        type: DataTypes.INTEGER,
+        references: {
+            model: users,
+            key: 'id'
+     }
+    },
+    ActorsId: {
+        type: DataTypes.INTEGER,
+        references: {
+            model: mentors,
+            key: 'id'
+     }
+    } 
+});
+users.belongsToMany(mentors, {through: UsersMentors})
+mentors.belongsToMany(users, {through: UsersMentors})
+
 module.exports= {
     Sequelize,
     sequelize,
     users,
-    mentors
+    mentors,
+    UsersMentors
 }

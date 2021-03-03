@@ -2,17 +2,47 @@ const User = require('../models').users
 const _ = require('lodash')
 const bcrypt = require('bcrypt')
 const jwt = require("jsonwebtoken")
+const multer = require('multer')
+
+const uploadImage = multer({
+    storage: multer.diskStorage({
+        destination: (req, file, cb) => {
+            cb(null, './uploads/userProfile/')
+        },
+        filename: (req, file, cb) => {
+            cb(null, new Date().getTime().toString() + '-' + file.originalname.replace(/\s/g, ''))
+        }
+    }),
+    limits: {
+        fileSize: 1024 * 1024 * 5
+    },
+    fileFilter: (req, file, cb) => {
+        if (file.mimetype === 'image/png' || file.mimetype === 'image/jpeg') {
+            cb(null, true)
+        } else {
+            cb(null, false)
+        }
+    }
+})
 
 //register
 function registerUser (req, res, next) {
-    User.create(req.body)
+    User.create({
+        email: req.body.email,
+        name: req.body.name,
+        username: req.body.username,
+        address: req.body.address,
+        profileImage: req.file.filename,
+        password: req.body.password
+    })
         .then( (data) => {
             let payload = { 
                 id: data.id,
-                username: data.username
+                username: data.username,
+                email: data.email
             }
             const token = jwt.sign(payload, process.env.JWT_TOKEN)
-            res.status(200).send({data, token})
+            res.status(200).json({data, token})
         })
         .catch( (err)=> {
             if(err.name == 'SequelizeUniqueConstraintError'){
@@ -25,7 +55,7 @@ function registerUser (req, res, next) {
                         }))
                     }
                 }
-                return res.status(422).send(failResponse)
+                return res.status(422).json(failResponse)
             }
             return next(err)
         }) 
@@ -33,15 +63,21 @@ function registerUser (req, res, next) {
 
 //login
 function login(req, res, next) {
-    User.findOne({ where: {email: req.body.email}})
+    User.findOne({ email: req.body.email})
         .then((data) => {
             bcrypt.compare(req.body.password, data.password, (err, result) => {
-                let payload = {
-                    id: data.id,
-                    email: data.email
+                if(err){
+                    return next(err)
                 }
-                const token = jwt.sign(payload, process.env.JWT_TOKEN)
-                res.status(200).send({ auth: true, token })
+                if(result){
+                    let payload = {
+                        id: data.id,
+                        email: data.email,
+                        username: data.username
+                    }
+                    const token = jwt.sign(payload, process.env.JWT_TOKEN)
+                    res.status(200).json({ auth: true, token })
+                }
             })
         })
         .catch((err) => {
@@ -53,7 +89,7 @@ function login(req, res, next) {
 function findAll (req, res, next){
     User.findAll()
         .then( (users) => {
-            res.status(200).send({users})
+            res.status(200).json({users})
         })
         .catch( (err)=> {
             return next(err)
@@ -65,7 +101,7 @@ function findOne (req, res, next){
     const id = req.params.id
     User.findByPk(id)
         .then( (data) => {
-            res.send(data)
+            res.json(data)
             if(data == null){
                 next("User with id is not found")
             }
@@ -86,7 +122,7 @@ function update(req, res, next){
         if(num!=1){
             return next(err)
         }
-        res.status(200).send({
+        res.status(200).json({
             success: true,
             message:"Update Successful"
         })
@@ -118,6 +154,7 @@ function _delete(req, res, next){
 
 module.exports = {
     registerUser,
+    uploadImage: uploadImage.single("profileImage"),
     login,
     findAll,
     findOne,

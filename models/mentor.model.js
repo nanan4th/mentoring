@@ -32,12 +32,12 @@ module.exports = (sequelize, Sequelize) => {
             allowNull: false
         },
         rate : {
-            type: Sequelize.FLOAT,
+            type: Sequelize.INTEGER,
             allowNull: false
         },
         profileImage : {
             type: Sequelize.STRING,
-            allowNull: false
+            allowNull: true
         },
         password : {
             type: Sequelize.STRING,
