@@ -142,30 +142,6 @@ function update(req, res, next) {
         })
 }
 
-//changePassword
-function changePassword(req, res, next){
-    User.findOne({where: {id: req.params.id}})
-    .then( (data) => {
-        bcrypt.compare(req.body.oldPassword, data.password, (err, result) => {
-            if(err){
-                return next(err)
-            }
-            if(result){
-                let payload = {
-                    id: data.id,
-                    email: data.email,
-                    username: data.username
-                }
-                const token = jwt.sign(payload, process.env.JWT_TOKEN)
-                res.status(200).json({ auth: true, token })
-            }
-        })
-    })
-    .catch( (err) => {
-        return next(err)
-    })
-}
-
 //delete
 function _delete(req, res, next){
     const id = req.params.id
