@@ -7,8 +7,8 @@ const password = joi.string().min(8).strict()
 
 const registerSchema = joi.object().keys({
     email: email.required(),
-    name: name.required(),
-    username: username.required(),
+    name: name,
+    username: username,
     address: name,
     password: password.required(),
     confirmPassword: joi.string().valid(joi.ref('password')).required().strict(),

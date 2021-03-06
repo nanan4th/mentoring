@@ -99,6 +99,33 @@ function explore(req, res, next) {
         })
 }
 
+function withdraw(req, res, next) {
+    Mentor.findOne({where: {id: req.params.id}})
+    .then( (data) => {
+        if(data.money - req.body.money <0){
+            res.status(500).json({
+                success: false,
+                message:"Uangnya gacukup mas"
+            })
+            return next(err)
+        } else {
+            Mentor.update({money: data.money-req.body.money}, {where: {id: req.params.id}})
+            .then(() => {
+                if(data.money < 0){
+                    return next(err)
+                }
+                res.status(200).json({
+                    success: true,
+                    message:"Proses withdraw berhasil"
+                })
+            })
+        }
+    })
+    .catch( (err) => {
+        return next(err)
+    })
+}
+
 //findAll 
 function findAll(req, res, next) {
     Mentor.findAll()
@@ -125,17 +152,19 @@ function findOne(req, res, next) {
         })
 }
 
-//updateOne
+//update
 function update(req, res, next) {
-    const id = req.params.id
-    let condition = {
-        id: id
-    }
-    Mentor.update(req.body, { where: condition })
-        .then(num => {
-            if (num != 1) {
-                return next(err)
-            }
+    Mentor.update({
+        name: req.body.name,
+        occupation: req.body.occupation,
+        category: req.body.category,
+        address: req.body.address,
+        method: req.body.method,
+        about: req.body.about,
+        rate: req.body.rate,
+        profileImage: req.file.filename
+    }, {where: {id: req.params.id }})
+        .then(() => {
             res.status(200).json({
                 success: true,
                 message: "Update Successful"
@@ -171,6 +200,7 @@ module.exports = {
     uploadImage: uploadImage.single("profileImage"),
     login,
     explore,
+    withdraw,
     findAll,
     findOne,
     update,

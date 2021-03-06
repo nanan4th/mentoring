@@ -19,14 +19,14 @@ const users = require('./user.model')(sequelize,Sequelize)
 const mentors = require('./mentor.model')(sequelize,Sequelize)
 
 const UsersMentors = sequelize.define('UsersMentors', {
-    usersId: {
+    userId: {
         type: DataTypes.INTEGER,
         references: {
             model: users,
             key: 'id'
      }
     },
-    ActorsId: {
+    mentorId: {
         type: DataTypes.INTEGER,
         references: {
             model: mentors,

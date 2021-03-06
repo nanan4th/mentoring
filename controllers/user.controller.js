@@ -29,16 +29,11 @@ const uploadImage = multer({
 function registerUser (req, res, next) {
     User.create({
         email: req.body.email,
-        name: req.body.name,
-        username: req.body.username,
-        address: req.body.address,
-        profileImage: req.file.filename,
         password: req.body.password
     })
         .then( (data) => {
             let payload = { 
                 id: data.id,
-                username: data.username,
                 email: data.email
             }
             const token = jwt.sign(payload, process.env.JWT_TOKEN)
@@ -85,6 +80,23 @@ function login(req, res, next) {
         })
 }
 
+//topUp
+function topUp(req, res, next){
+    User.findOne({where: {id: req.params.id}})
+    .then( (data) => {
+        User.update({money: req.body.money + data.money}, {where: {id: req.params.id}})
+            .then(() => {
+                res.status(200).json({
+                    success: true,
+                    message:"Proses TopUp berhasil"
+                })
+            })
+    })
+    .catch( (err) => {
+        return next(err)
+    })
+}
+
 //findAll 
 function findAll (req, res, next){
     User.findAll()
@@ -111,20 +123,42 @@ function findOne (req, res, next){
         })
 }
 
-//updateOne
-function update(req, res, next){
-    const id = req.params.id
-    let condition = {
-        id: id
-    }
-    User.update(req.body, {where : condition})
-    .then(num=> {
-        if(num!=1){
+//update
+function update(req, res, next) {
+    User.update({
+        name: req.body.name,
+        username: req.body.name,
+        address: req.body.address,
+        profileImage: req.file.filename,
+    }, {where: {id: req.params.id }})
+        .then(() => {
+            res.status(200).json({
+                success: true,
+                message: "Update Successful"
+            })
+        })
+        .catch((err) => {
             return next(err)
-        }
-        res.status(200).json({
-            success: true,
-            message:"Update Successful"
+        })
+}
+
+//changePassword
+function changePassword(req, res, next){
+    User.findOne({where: {id: req.params.id}})
+    .then( (data) => {
+        bcrypt.compare(req.body.oldPassword, data.password, (err, result) => {
+            if(err){
+                return next(err)
+            }
+            if(result){
+                let payload = {
+                    id: data.id,
+                    email: data.email,
+                    username: data.username
+                }
+                const token = jwt.sign(payload, process.env.JWT_TOKEN)
+                res.status(200).json({ auth: true, token })
+            }
         })
     })
     .catch( (err) => {
@@ -156,6 +190,7 @@ module.exports = {
     registerUser,
     uploadImage: uploadImage.single("profileImage"),
     login,
+    topUp,
     findAll,
     findOne,
     update,

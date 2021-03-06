@@ -9,11 +9,11 @@ module.exports = (sequelize, Sequelize) => {
         },
         name : {
             type: Sequelize.STRING,
-            allowNull: false
+            allowNull: true
         },
         username : {
             type: Sequelize.STRING,
-            allowNull: false,
+            allowNull: true,
             unique: true
         },
         address : {
@@ -23,6 +23,10 @@ module.exports = (sequelize, Sequelize) => {
         profileImage : {
             type: Sequelize.STRING,
             allowNull: true
+        },
+        money: {
+            type: Sequelize.INTEGER,
+            defaultValue: 0
         },
         password : {
             type: Sequelize.STRING,
