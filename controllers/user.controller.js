@@ -26,25 +26,25 @@ const uploadImage = multer({
 })
 
 //register
-function registerUser (req, res, next) {
+function registerUser(req, res, next) {
     User.create({
         email: req.body.email,
         password: req.body.password
     })
-        .then( (data) => {
-            let payload = { 
+        .then((data) => {
+            let payload = {
                 id: data.id,
                 email: data.email
             }
             const token = jwt.sign(payload, process.env.JWT_TOKEN)
-            res.status(200).json({data, token})
+            res.status(200).json({ data, token })
         })
-        .catch( (err)=> {
-            if(err.name == 'SequelizeUniqueConstraintError'){
+        .catch((err) => {
+            if (err.name == 'SequelizeUniqueConstraintError') {
                 const failResponse = {
                     success: 'false',
                     error: {
-                        details : _.map(err.errors,({message, type}) => ({
+                        details: _.map(err.errors, ({ message, type }) => ({
                             message,
                             type
                         }))
@@ -53,22 +53,21 @@ function registerUser (req, res, next) {
                 return res.status(422).json(failResponse)
             }
             return next(err)
-        }) 
+        })
 }
 
 //login
 function login(req, res, next) {
-    User.findOne({ email: req.body.email})
+    User.findOne({ where: { email: req.body.email } })
         .then((data) => {
             bcrypt.compare(req.body.password, data.password, (err, result) => {
-                if(err){
+                if (err) {
                     return next(err)
                 }
-                if(result){
+                if (result) {
                     let payload = {
                         id: data.id,
-                        email: data.email,
-                        username: data.username
+                        email: data.email
                     }
                     const token = jwt.sign(payload, process.env.JWT_TOKEN)
                     res.status(200).json({ auth: true, token })
@@ -81,44 +80,50 @@ function login(req, res, next) {
 }
 
 //topUp
-function topUp(req, res, next){
-    User.findOne({where: {id: req.params.id}})
-    .then( (data) => {
-        User.update({money: req.body.money + data.money}, {where: {id: req.params.id}})
-            .then(() => {
-                res.status(200).json({
-                    success: true,
-                    message:"Proses TopUp berhasil"
+function topUp(req, res, next) {
+    User.findOne({ where: { id: req.params.id } })
+        .then((data) => {
+            if (req.body.money < 1) {
+                res.status(500).json({
+                    success: false,
+                    message: "Tolong masukkan nominal yang benar"
                 })
-            })
-    })
-    .catch( (err) => {
-        return next(err)
-    })
+            }
+            User.update({ money: req.body.money + data.money }, { where: { id: req.params.id } })
+                .then(() => {
+                    res.status(200).json({
+                        success: true,
+                        message: "Proses TopUp berhasil"
+                    })
+                })
+        })
+        .catch((err) => {
+            return next(err)
+        })
 }
 
 //findAll 
-function findAll (req, res, next){
+function findAll(req, res, next) {
     User.findAll()
-        .then( (users) => {
-            res.status(200).json({users})
+        .then((users) => {
+            res.status(200).json({ users })
         })
-        .catch( (err)=> {
+        .catch((err) => {
             return next(err)
         })
 }
 
 //findOne
-function findOne (req, res, next){
+function findOne(req, res, next) {
     const id = req.params.id
     User.findByPk(id)
-        .then( (data) => {
+        .then((data) => {
             res.json(data)
-            if(data == null){
+            if (data == null) {
                 next("User with id is not found")
             }
         })
-        .catch( (err) => {
+        .catch((err) => {
             return next(err)
         })
 }
@@ -130,7 +135,7 @@ function update(req, res, next) {
         username: req.body.name,
         address: req.body.address,
         profileImage: req.file.filename,
-    }, {where: {id: req.params.id }})
+    }, { where: { id: req.params.id } })
         .then(() => {
             res.status(200).json({
                 success: true,
@@ -143,23 +148,23 @@ function update(req, res, next) {
 }
 
 //delete
-function _delete(req, res, next){
+function _delete(req, res, next) {
     const id = req.params.id
     let condition = {
         id: id
     }
-    User.destroy({where: condition})
-    .then(num => {
-        if(num != 1){
-            return next(err)
-        }
-        res.status(200).send({
-            message: "Delete successful"
+    User.destroy({ where: condition })
+        .then(num => {
+            if (num != 1) {
+                return next(err)
+            }
+            res.status(200).send({
+                message: "Delete successful"
+            })
         })
-    })
-    .catch(err => {
-        return next(err)
-    })
+        .catch(err => {
+            return next(err)
+        })
 }
 
 module.exports = {

@@ -7,8 +7,6 @@ function joiValidator(req, res, next){
 
     const _validationOptions = {
         abortEarly : false,
-        // allowUnknown : true,
-        // stripUnknown: true
     }
 
     let route = req.originalUrl.split("/")

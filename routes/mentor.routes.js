@@ -9,7 +9,7 @@ router.post('/login', mentorController.login)
 
 router.get('/explore', mentorController.explore)
 
-router.put('/profile/withdraw/:id', mentorController.withdraw)
+router.put('/profile/withdraw/:id', joiMiddleware, mentorController.withdraw)
 
 router.get('/mentors', jwtMiddleware, mentorController.findAll)
 

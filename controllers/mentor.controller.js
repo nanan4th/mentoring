@@ -66,23 +66,22 @@ function registerMentor(req, res, next) {
 
 //login
 function login(req, res, next) {
-    Mentor.findOne({ where: {email: req.body.email}})
-    .then((data) => {
-        bcrypt.compare(req.body.password, data.password, (err, result) => {
-            if(err){
-                return next(err)
-            }
-            if(result){
-                let payload = {
-                    id: data.id,
-                    email: data.email,
-                    username: data.username
+    Mentor.findOne({ where: { email: req.body.email } })
+        .then((data) => {
+            bcrypt.compare(req.body.password, data.password, (err, result) => {
+                if (err) {
+                    return next(err)
                 }
-                const token = jwt.sign(payload, process.env.JWT_TOKEN)
-                res.status(200).json({ auth: true, token })
-            }
+                if (result) {
+                    let payload = {
+                        id: data.id,
+                        email: data.email
+                    }
+                    const token = jwt.sign(payload, process.env.JWT_TOKEN)
+                    res.status(200).json({ auth: true, token })
+                }
+            })
         })
-    })
         .catch((err) => {
             return next(err)
         })
@@ -90,9 +89,9 @@ function login(req, res, next) {
 
 //explore
 function explore(req, res, next) {
-    Mentor.findAll({where: {category: req.body.category}})
-        .then( (mentors) => {
-            res.status(200).json({mentors})
+    Mentor.findAll({ where: { category: req.body.category } })
+        .then((mentors) => {
+            res.status(200).json({ mentors })
         })
         .catch((err) => {
             return next(err)
@@ -100,30 +99,34 @@ function explore(req, res, next) {
 }
 
 function withdraw(req, res, next) {
-    Mentor.findOne({where: {id: req.params.id}})
-    .then( (data) => {
-        if(data.money - req.body.money <0){
-            res.status(500).json({
-                success: false,
-                message:"Uangnya gacukup mas"
-            })
-            return next(err)
-        } else {
-            Mentor.update({money: data.money-req.body.money}, {where: {id: req.params.id}})
-            .then(() => {
-                if(data.money < 0){
-                    return next(err)
-                }
-                res.status(200).json({
-                    success: true,
-                    message:"Proses withdraw berhasil"
+    Mentor.findOne({ where: { id: req.params.id } })
+        .then((data) => {
+            if (req.body.money < 1) {
+                res.status(500).json({
+                    success: false,
+                    message: "Tolong masukkan nominal yang benar"
                 })
-            })
-        }
-    })
-    .catch( (err) => {
-        return next(err)
-    })
+            }
+            if (data.money - req.body.money < 0) {
+                res.status(500).json({
+                    success: false,
+                    message: "Uangnya gacukup mas"
+                })
+            }
+            Mentor.update({ money: data.money - req.body.money }, { where: { id: req.params.id } })
+                .then(() => {
+                    if (data.money < 0) {
+                        return next(err)
+                    }
+                    res.status(200).json({
+                        success: true,
+                        message: "Proses withdraw berhasil"
+                    })
+                })
+        })
+        .catch((err) => {
+            return next(err)
+        })
 }
 
 //findAll 
@@ -163,7 +166,7 @@ function update(req, res, next) {
         about: req.body.about,
         rate: req.body.rate,
         profileImage: req.file.filename
-    }, {where: {id: req.params.id }})
+    }, { where: { id: req.params.id } })
         .then(() => {
             res.status(200).json({
                 success: true,
