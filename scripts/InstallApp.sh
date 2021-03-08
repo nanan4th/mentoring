@@ -2,7 +2,7 @@
 
 cd /var/app/current/;
 
-. ~/.nvm/nvm.sh;
+. /.nvm/nvm.sh;
 
 nvm install 14 --lts;
 

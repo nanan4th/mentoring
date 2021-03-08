@@ -1,6 +1,6 @@
 #!/bin/bash
 
-. ~/.nvm/nvm.sh;
+. /.nvm/nvm.sh;
 
 pm2 stop all;
 
