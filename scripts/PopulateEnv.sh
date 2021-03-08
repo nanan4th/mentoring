@@ -20,3 +20,5 @@ echo "DB_USER=intern_11" >> .env;
 echo "DB_PASS=" >> .env;
 
 echo "JWT_TOKEN=$(echo 'ThisIsASecretKey' | base64)" >> .env;
+
+echo "PUBLIC_PATH=/var/app/public";
