@@ -7,11 +7,11 @@ router.post('/register', userController.uploadImage, joiMiddleware, userControll
 
 router.post('/login', userController.login)
 
-router.put('/profile/topUp/:id', userController.topUp)
-
 router.get('/users', jwtMiddleware, userController.findAll)
 
 router.get('/:id', userController.findOne)
+
+router.put('/profile/topUp/:id', userController.topUp)
 
 router.put('/update/:id', joiMiddleware, userController.uploadImage, userController.update)
 

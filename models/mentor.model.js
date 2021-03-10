@@ -40,7 +40,11 @@ module.exports = (sequelize, Sequelize) => {
         },
         profileImage : {
             type: Sequelize.STRING,
-            allowNull: true
+            allowNull: false
+        },
+        cvImage : {
+            type: Sequelize.STRING,
+            allowNull: false
         },
         money: {
             type: Sequelize.INTEGER,

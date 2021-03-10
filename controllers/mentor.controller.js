@@ -7,7 +7,11 @@ const multer = require("multer")
 const uploadImage = multer({
     storage: multer.diskStorage({
         destination: (req, file, cb) => {
-            cb(null, './uploads/mentorProfile/')
+            if(file.fieldname==="profileImage"){
+                cb(null, './uploads/mentorProfile/imageProfile')
+            } else if (file.fieldname==="cvImage") {
+                cb(null, './uploads/mentorProfile/cv')
+            }
         },
         filename: (req, file, cb) => {
             cb(null, new Date().getTime().toString() + '-' + file.originalname.replace(/\s/g, ''))
@@ -17,13 +21,28 @@ const uploadImage = multer({
         fileSize: 1024 * 1024 * 5
     },
     fileFilter: (req, file, cb) => {
-        if (file.mimetype === 'image/png' || file.mimetype === 'image/jpeg') {
-            cb(null, true)
-        } else {
-            cb(null, false)
+        if(file.fieldname==="profileImage"){
+            if (file.mimetype === 'image/png' || file.mimetype === 'image/jpeg') {
+                cb(null, true)
+            } else {
+                cb(null, false)
+            }
+        } else if (file.fieldname==="cvImage"){
+            if (file.mimetype === 'application/pdf') {
+                cb(null, true)
+            } else {
+                cb(null, false)
+            }
         }
     }
-})
+}).fields([
+    {
+        name:'profileImage',maxCount:1
+    },
+    {
+        name:'cvImage',maxCount:1
+    }
+])
 
 //register
 function registerMentor(req, res, next) {
@@ -36,7 +55,8 @@ function registerMentor(req, res, next) {
         method: req.body.method,
         about: req.body.about,
         rate: req.body.rate,
-        profileImage: req.file.filename,
+        cvImage: req.files.cvImage[0].filename,
+        profileImage: req.files.profileImage[0].filename,
         password: req.body.password
     })
         .then((data) => {
@@ -99,6 +119,7 @@ function explore(req, res, next) {
 }
 
 function withdraw(req, res, next) {
+    console.log(req.body.money)
     Mentor.findOne({ where: { id: req.params.id } })
         .then((data) => {
             if (req.body.money < 1) {
@@ -200,7 +221,7 @@ function _delete(req, res, next) {
 
 module.exports = {
     registerMentor,
-    uploadImage: uploadImage.single("profileImage"),
+    uploadImage,
     login,
     explore,
     withdraw,

@@ -29,6 +29,7 @@ const uploadImage = multer({
 function registerUser(req, res, next) {
     User.create({
         email: req.body.email,
+        name: req.body.name,
         password: req.body.password
     })
         .then((data) => {

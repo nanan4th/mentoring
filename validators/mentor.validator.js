@@ -6,7 +6,6 @@ const name = joi.string().regex(/^[a-z A-Z]+$/)
 const about = joi.string().regex(/^[a-z A-Z]+$/).min(30)
 const rate = joi.number()
 const password = joi.string().min(8).strict()
-const money = joi.number().positive()
 
 const registerSchema = joi.object().keys({
     email: email.required(),
@@ -17,7 +16,6 @@ const registerSchema = joi.object().keys({
     method: name.required(),
     about: about.required(),
     rate: rate.required(),
-    money: money,
     password: password.required(),
     confirmPassword: joi.string().valid(joi.ref('password')).required().strict(),
 })
