@@ -4,6 +4,8 @@ const bcrypt = require('bcrypt')
 const jwt = require("jsonwebtoken")
 const multer = require("multer")
 
+const PUBLIC_PATH = process.env.PUBLIC_PATH || '.';
+
 const uploadImage = multer({
     storage: multer.diskStorage({
         destination: (req, file, cb) => {
