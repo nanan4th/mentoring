@@ -12,7 +12,7 @@ const uploadImage = multer({
             if(file.fieldname==="profileImage"){
                 cb(null, PUBLIC_PATH + './uploads/mentorProfile/imageProfile')
             } else if (file.fieldname==="cvImage") {
-                cb(null, PUBLIC_PATH + './uploads/mentorProfile/cv')
+                cb(null, './uploads/mentorProfile/cv')
             }
         },
         filename: (req, file, cb) => {
