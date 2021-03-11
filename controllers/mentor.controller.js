@@ -10,7 +10,7 @@ const uploadImage = multer({
     storage: multer.diskStorage({
         destination: (req, file, cb) => {
             if(file.fieldname==="profileImage"){
-                cb(null, PUBLIC_PATH + './uploads/mentorProfile/imageProfile')
+                cb(null, './uploads/mentorProfile/imageProfile')
             } else if (file.fieldname==="cvImage") {
                 cb(null, './uploads/mentorProfile/cv')
             }
