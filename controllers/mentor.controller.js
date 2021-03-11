@@ -120,20 +120,21 @@ function explore(req, res, next) {
         })
 }
 
+//withdraw
 function withdraw(req, res, next) {
     console.log(req.body.money)
     Mentor.findOne({ where: { id: req.params.id } })
         .then((data) => {
             if (req.body.money < 1) {
-                res.status(500).json({
+                return res.status(500).json({
                     success: false,
                     message: "Tolong masukkan nominal yang benar"
                 })
             }
             if (data.money - req.body.money < 0) {
-                res.status(500).json({
+                return res.status(500).json({
                     success: false,
-                    message: "Uangnya gacukup mas"
+                    message: "Saldo utama tidak mencukupi"
                 })
             }
             Mentor.update({ money: data.money - req.body.money }, { where: { id: req.params.id } })
@@ -156,7 +157,7 @@ function withdraw(req, res, next) {
 function findAll(req, res, next) {
     Mentor.findAll()
         .then((mentors) => {
-            res.status(200).json({ users: mentors })
+            res.status(200).json({ mentors })
         })
         .catch((err) => {
             return next(err)

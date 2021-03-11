@@ -87,7 +87,7 @@ function topUp(req, res, next) {
     User.findOne({ where: { id: req.params.id } })
         .then((data) => {
             if (req.body.money < 1) {
-                res.status(500).json({
+                 return res.status(500).json({
                     success: false,
                     message: "Tolong masukkan nominal yang benar"
                 })
@@ -135,7 +135,7 @@ function findOne(req, res, next) {
 function update(req, res, next) {
     User.update({
         name: req.body.name,
-        username: req.body.name,
+        username: req.body.username,
         address: req.body.address,
         profileImage: req.file.filename,
     }, { where: { id: req.params.id } })
