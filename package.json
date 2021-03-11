@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "bcc-project",
   "main": "index.js",
+  "proxy":"http://bcc-filkom-ub-elb-392908734.ap-southeast-1.elb.amazonaws.com:8091/",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
