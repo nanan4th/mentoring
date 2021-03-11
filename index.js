@@ -14,12 +14,13 @@ const muRoute = require('./routes/mentoruser.routes')
 const errorHandler = require('./utils/errorHandler')
 
 //body parser
-app.use((req, res, next) => {
-    req.setHeader('Access-Control-Allow-Origin','*');
-    req.setHeader('Access-Control-Allow-Methods','GET, POST, PUT, PATCH, DELETE, OPTIONS');
-    req.setHeader('Access-Control-Allow-Headers','Content-Type, Authorization');
-    next();
-})
+// app.use((req, res, next) => {
+//     req.setHeader('Access-Control-Allow-Origin','*');
+//     req.setHeader('Access-Control-Allow-Methods','GET, POST, PUT, PATCH, DELETE, OPTIONS');
+//     req.setHeader('Access-Control-Allow-Headers','Content-Type, Authorization');
+//     next();
+// })
+app.use(cors())
 app.use(express.json())
 app.use(express.urlencoded( {extended:true}))
 
