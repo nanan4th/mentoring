@@ -1,6 +1,6 @@
 const router = require('express').Router()
 const muController = require('../controllers/mentoruser.controller')
 
-router.post('/payment', muController.payment)
+router.post('/connect', muController.connection)
 
 module.exports=router

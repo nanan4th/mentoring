@@ -15,10 +15,6 @@ module.exports = (sequelize, Sequelize) => {
             type: Sequelize.STRING,
             allowNull: false
         },
-        category : {
-            type: Sequelize.STRING,
-            allowNull: false
-        },
         address : {
             type: Sequelize.STRING,
             allowNull: false
@@ -26,9 +22,6 @@ module.exports = (sequelize, Sequelize) => {
         method : {
             type: Sequelize.STRING,
             allowNull: false,
-            where: {
-                method: ["Tatap muka", "Online"]
-            }
         },
         about : {
             type: Sequelize.STRING,

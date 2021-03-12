@@ -37,7 +37,8 @@ function registerUser(req, res, next) {
         .then((data) => {
             let payload = {
                 id: data.id,
-                email: data.email
+                email: data.email,
+                role: "mentee"
             }
             const token = jwt.sign(payload, process.env.JWT_TOKEN)
             res.status(200).json({ data, token })
@@ -70,7 +71,8 @@ function login(req, res, next) {
                 if (result) {
                     let payload = {
                         id: data.id,
-                        email: data.email
+                        email: data.email,
+                        role: "mentee"
                     }
                     const token = jwt.sign(payload, process.env.JWT_TOKEN)
                     res.status(200).json({ auth: true, token })
@@ -87,7 +89,7 @@ function topUp(req, res, next) {
     User.findOne({ where: { id: req.params.id } })
         .then((data) => {
             if (req.body.money < 1) {
-                 return res.status(500).json({
+                return res.status(500).json({
                     success: false,
                     message: "Tolong masukkan nominal yang benar"
                 })
@@ -150,6 +152,33 @@ function update(req, res, next) {
         })
 }
 
+//updatePassword
+// function updatePassword(req, res, next) {
+//     User.findByPk(req.params.id)
+//         .then((data) => {
+//             bcrypt.compare(req.body.password, data.password, (err, result) => {
+//                 if (err) {
+//                     return next(err)
+//                 }
+//                 if (result) {
+//                     const newPassword = bcrypt.hashSync(req.body.newPassword, 10)
+//                     User.update({
+//                         password: newPassword
+//                     })
+//                     .then(()=> {
+//                         res.status(200).json({
+//                             success: true,
+//                             message: "Update Password Successful"
+//                         })
+//                     })
+//                 }
+//             })
+//         })
+//         .catch((err) => {
+//             return next(err)
+//         })
+// }
+
 //delete
 function _delete(req, res, next) {
     const id = req.params.id
@@ -178,5 +207,6 @@ module.exports = {
     findAll,
     findOne,
     update,
+    // updatePassword,
     delete: _delete
 }

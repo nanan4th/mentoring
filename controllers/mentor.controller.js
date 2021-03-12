@@ -57,6 +57,7 @@ function registerMentor(req, res, next) {
         method: req.body.method,
         about: req.body.about,
         rate: req.body.rate,
+        categoryId: req.body.categoryId,
         cvImage: req.files.cvImage[0].filename,
         profileImage: req.files.profileImage[0].filename,
         password: req.body.password
@@ -64,7 +65,8 @@ function registerMentor(req, res, next) {
         .then((data) => {
             let payload = {
                 id: data.id,
-                email: data.email
+                email: data.email,
+                role: "mentor"
             }
             const token = jwt.sign(payload, process.env.JWT_TOKEN)
             res.status(200).json({ data, token })
@@ -97,7 +99,8 @@ function login(req, res, next) {
                 if (result) {
                     let payload = {
                         id: data.id,
-                        email: data.email
+                        email: data.email,
+                        role: "mentor"
                     }
                     const token = jwt.sign(payload, process.env.JWT_TOKEN)
                     res.status(200).json({ auth: true, token })
@@ -111,7 +114,7 @@ function login(req, res, next) {
 
 //explore
 function explore(req, res, next) {
-    Mentor.findAll({ where: { category: req.body.category } })
+    Mentor.findAll({ where: { categoryId: req.params.categoryId } })
         .then((mentors) => {
             res.status(200).json({ mentors })
         })
@@ -122,7 +125,6 @@ function explore(req, res, next) {
 
 //withdraw
 function withdraw(req, res, next) {
-    console.log(req.body.money)
     Mentor.findOne({ where: { id: req.params.id } })
         .then((data) => {
             if (req.body.money < 1) {
@@ -184,12 +186,12 @@ function update(req, res, next) {
     Mentor.update({
         name: req.body.name,
         occupation: req.body.occupation,
-        category: req.body.category,
+        categoryId: req.body.categoryId,
         address: req.body.address,
         method: req.body.method,
         about: req.body.about,
         rate: req.body.rate,
-        profileImage: req.file.filename
+        profileImage: req.files.profileImage[0].filename
     }, { where: { id: req.params.id } })
         .then(() => {
             res.status(200).json({

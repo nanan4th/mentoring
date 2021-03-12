@@ -15,6 +15,8 @@ router.put('/profile/topUp/:id', userController.topUp)
 
 router.put('/update/:id', joiMiddleware, userController.uploadImage, userController.update)
 
+// router.put('/update/password/:id', joiMiddleware, userController.updatePassword)
+
 router.delete('/delete/:id', userController.delete)
 
 module.exports=router

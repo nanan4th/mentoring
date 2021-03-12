@@ -9,23 +9,19 @@ db.sequelize.sync({ });
 
 //routes
 const userRoute = require('./routes/user.routes')
+const categoryRoute = require('./routes/category.routes')
 const mentorRoute = require('./routes/mentor.routes')
 const muRoute = require('./routes/mentoruser.routes')
 const errorHandler = require('./utils/errorHandler')
 
 //body parser
-// app.use((req, res, next) => {
-//     req.setHeader('Access-Control-Allow-Origin','*');
-//     req.setHeader('Access-Control-Allow-Methods','GET, POST, PUT, PATCH, DELETE, OPTIONS');
-//     req.setHeader('Access-Control-Allow-Headers','Content-Type, Authorization');
-//     next();
-// })
 app.use(cors())
 app.use(express.json())
 app.use(express.urlencoded( {extended:true}))
 
 //route
-app.use('/user',userRoute)
+app.use('/user', userRoute)
+app.use('/category', categoryRoute)
 app.use('/mentor',mentorRoute)
 app.use('/mu', muRoute)
 app.use(errorHandler)
