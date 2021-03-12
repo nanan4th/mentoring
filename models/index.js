@@ -17,10 +17,10 @@ const sequelize = new Sequelize(env.DB_NAME, env.DB_USER, env.DB_PASS, {
 
 const users = require('./user.model')(sequelize,Sequelize)
 const mentors = require('./mentor.model')(sequelize,Sequelize)
-const categories = require('./category.model')(sequelize,Sequelize)
+const kategori = require('./kategori.model')(sequelize,Sequelize)
 
-categories.hasMany(mentors)
-mentors.belongsTo(categories)
+kategori.hasMany(mentors)
+mentors.belongsTo(kategori)
 
 const UsersMentors = sequelize.define('UsersMentors', {
     userId: {
@@ -46,6 +46,6 @@ module.exports= {
     sequelize,
     users,
     mentors,
-    categories,
+    kategori,
     UsersMentors
 }

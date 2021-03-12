@@ -7,7 +7,7 @@ router.post('/register', mentorController.uploadImage, joiMiddleware, mentorCont
 
 router.post('/login', mentorController.login)
 
-router.get('/explore/:categoryId', mentorController.explore)
+router.get('/explore/:kategoriId', mentorController.explore)
 
 router.get('/mentors', jwtMiddleware, mentorController.findAll)
 

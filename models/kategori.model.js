@@ -1,14 +1,15 @@
 module.exports = (sequelize, Sequelize) => {
-    const category = sequelize.define("categories", {
-        kategori: {
+    const kategori = sequelize.define("kategori", {
+        name : {
             type: Sequelize.STRING,
             allowNull: false,
+            unique: true
         }
     }, )
 
-    category.prototype.toJSON = function () {
+    kategori.prototype.toJSON = function() {
         var values = Object.assign({}, this.get())
         return values
     }
-    return category
+    return kategori
 }

@@ -9,7 +9,7 @@ db.sequelize.sync({ });
 
 //routes
 const userRoute = require('./routes/user.routes')
-const categoryRoute = require('./routes/category.routes')
+const categoryRoute = require('./routes/kategori.routes')
 const mentorRoute = require('./routes/mentor.routes')
 const muRoute = require('./routes/mentoruser.routes')
 const errorHandler = require('./utils/errorHandler')

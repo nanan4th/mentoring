@@ -57,7 +57,7 @@ function registerMentor(req, res, next) {
         method: req.body.method,
         about: req.body.about,
         rate: req.body.rate,
-        categoryId: req.body.categoryId,
+        kategoriId: req.body.kategoriId,
         cvImage: req.files.cvImage[0].filename,
         profileImage: req.files.profileImage[0].filename,
         password: req.body.password
@@ -114,7 +114,7 @@ function login(req, res, next) {
 
 //explore
 function explore(req, res, next) {
-    Mentor.findAll({ where: { categoryId: req.params.categoryId } })
+    Mentor.findAll({ where: { kategoriId: req.params.kategoriId } })
         .then((mentors) => {
             res.status(200).json({ mentors })
         })
@@ -186,7 +186,7 @@ function update(req, res, next) {
     Mentor.update({
         name: req.body.name,
         occupation: req.body.occupation,
-        categoryId: req.body.categoryId,
+        kategoriId: req.body.kategoriId,
         address: req.body.address,
         method: req.body.method,
         about: req.body.about,

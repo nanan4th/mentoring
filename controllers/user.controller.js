@@ -136,7 +136,6 @@ function findOne(req, res, next) {
 //update
 function update(req, res, next) {
     User.update({
-        name: req.body.name,
         username: req.body.username,
         address: req.body.address,
         profileImage: req.file.filename,
@@ -151,33 +150,6 @@ function update(req, res, next) {
             return next(err)
         })
 }
-
-//updatePassword
-// function updatePassword(req, res, next) {
-//     User.findByPk(req.params.id)
-//         .then((data) => {
-//             bcrypt.compare(req.body.password, data.password, (err, result) => {
-//                 if (err) {
-//                     return next(err)
-//                 }
-//                 if (result) {
-//                     const newPassword = bcrypt.hashSync(req.body.newPassword, 10)
-//                     User.update({
-//                         password: newPassword
-//                     })
-//                     .then(()=> {
-//                         res.status(200).json({
-//                             success: true,
-//                             message: "Update Password Successful"
-//                         })
-//                     })
-//                 }
-//             })
-//         })
-//         .catch((err) => {
-//             return next(err)
-//         })
-// }
 
 //delete
 function _delete(req, res, next) {

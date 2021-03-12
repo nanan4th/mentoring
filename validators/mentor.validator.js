@@ -1,5 +1,4 @@
 const joi = require("joi")
-const { category } = require("../controllers/category.controller")
 
 const email = joi.string().email()
 const address = joi.string()
@@ -17,7 +16,7 @@ const registerSchema = joi.object().keys({
     method: method.required(),
     about: about.required(),
     rate: rate.required(),
-    categoryId: rate.required(),
+    kategoriId: rate.required(),
     password: password.required(),
     confirmPassword: joi.string().valid(joi.ref('password')).required().strict(),
 })
