@@ -136,6 +136,7 @@ function findOne(req, res, next) {
 //update
 function update(req, res, next) {
     User.update({
+        name: req.body.name,
         username: req.body.username,
         address: req.body.address,
         profileImage: req.file.filename,
@@ -179,6 +180,5 @@ module.exports = {
     findAll,
     findOne,
     update,
-    // updatePassword,
     delete: _delete
 }
